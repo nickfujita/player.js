@@ -594,9 +594,9 @@ playerjs.Receiver.prototype.init = function(events, methods){
 
 playerjs.Receiver.prototype.receive = function(e){
   // Only want to listen to events that came from our origin.
-  if (e.origin !== this.origin){
-    return false;
-  }
+  // if (e.origin !== this.origin){
+  //   return false;
+  // }
 
   // Browsers that support postMessage also support JSON.
   var data = {};
