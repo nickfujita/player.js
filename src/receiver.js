@@ -8,11 +8,11 @@
 * receiver.emit('timeupdate', {});
 */
 
-playerjs.Receiver = function(events, methods){
-  this.init(events, methods);
+playerjs.Receiver = function(events, methods, originWhitelist){
+  this.init(events, methods, originWhitelist);
 };
 
-playerjs.Receiver.prototype.init = function(events, methods){
+playerjs.Receiver.prototype.init = function(events, methods, originWhitelist){
   var self = this;
 
   // Deal with the ready crap.
@@ -39,14 +39,20 @@ playerjs.Receiver.prototype.init = function(events, methods){
   // We aren't in an iframe, don't listen.
   if (!this.reject){
     playerjs.addEvent(window, 'message', function(e){
-      self.receive(e);
+      self.receive(e, originWhitelist);
     });
   }
 };
 
-playerjs.Receiver.prototype.receive = function(e){
+playerjs.Receiver.prototype.receive = function(e, originWhitelist){
+  var isWhitelistOrigin = originWhitelist &&
+    Array.isArray(originWhitelist) &&
+    originWhitelist.reduce(function (accum, item) {
+      return Boolean(accum ||
+        (e.origin && e.origin.indexOf(item) > -1));
+    });
   // Only want to listen to events that came from our origin.
-  if (e.origin !== this.origin){
+  if (e.origin !== this.origin && !isWhitelistOrigin){
     return false;
   }
 
